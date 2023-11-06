@@ -12,7 +12,7 @@ import os
   # accessible as a variable in index.html:
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
-from flask import Flask, request, render_template, g, redirect, Response, abort
+from flask import Flask, request, render_template, g, redirect, Response, abort, jsonify
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
@@ -43,11 +43,11 @@ engine = create_engine(DATABASEURI)
 #
 conn = engine.connect()
 
-conn.execute("""CREATE TABLE IF NOT EXISTS test (
-  id serial,
-  name text
-);""")
-conn.execute("""INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace');""")
+# conn.execute("""CREATE TABLE IF NOT EXISTS test (
+#   id serial,
+#   name text
+# );""")
+# conn.execute("""INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace');""")
 
 
 @app.before_request
@@ -111,11 +111,11 @@ def index():
   #
   # example of a database query
   #
-  cursor = g.conn.execute("SELECT name FROM test")
-  names = []
-  for result in cursor:
-    names.append(result['name'])  # can also be accessed using result[0]
-  cursor.close()
+  # cursor = g.conn.execute("SELECT name FROM test")
+  # names = []
+  # for result in cursor:
+  #   names.append(result['name'])  # can also be accessed using result[0]
+  # cursor.close()
 
   #
   # Flask uses Jinja templates, which is an extension to HTML where you can
@@ -143,14 +143,14 @@ def index():
   #     <div>{{n}}</div>
   #     {% endfor %}
   #
-  context = dict(data = names)
+  # context = dict(data = names)
 
 
   #
   # render_template looks in the templates/ folder for files.
   # for example, the below file reads template/index.html
   #
-  return render_template("index.html", **context)
+  return render_template("index.html")
 
 #
 # This is an example of a different path.  You can see it at:
@@ -160,23 +160,56 @@ def index():
 # Notice that the function name is another() rather than index()
 # The functions for each app.route need to have different names
 #
-@app.route('/another')
-def another():
-  return render_template("another.html")
+# @app.route('/another')
+# def another():
+#   return render_template("another.html")
+
+# Get the column labels of table
+@app.route('/_get_columns')
+def get_columns():
+    table_name = request.args.get('selected_table', type=str)
+    if not table_name:
+        return jsonify(error='No table selected'), 400
+
+    inspector = inspect(engine)
+    try:
+        # Get all column names for the selected table
+        columns = inspector.get_columns(table_name)
+        column_names = [column['name'] for column in columns]
+    except Exception as e:
+        return jsonify(error=str(e)), 500
+
+    # Return the column names as a list
+    return jsonify(column_names=column_names)
+
+# @app.route('/select', methods=['POST'])
+# def select():
+#     table_name = request.form['table']
+#     query = text(f"SELECT * FROM {table_name}")
+#     try:
+#       results = engine.execute(query).fetchall()
+#       rows = [dict(row) for row in results]
+#       return jsonify(rows=rows)
+#     except Exception as e:
+#       return str(e), 500
+
+# Rendering the entire table for user's selection from "Select Table"
+@app.route('/_get_table_data')
+def get_table_data():
+    table_name = request.args.get('table_name', '', type=str)
+    query = text(f"SELECT * FROM {table_name}")
+    results = engine.execute(query).fetchall()
+    return render_template('partials/table_data.html', rows=results)
 
 
-# Example of adding new data to the database
-@app.route('/add', methods=['POST'])
-def add():
-  name = request.form['name']
-  g.conn.execute('INSERT INTO test(name) VALUES (%s)', name)
-  return redirect('/')
+# @app.route('/filter1', methods=['POST'])
+# def filter():
 
 
-@app.route('/login')
-def login():
-    abort(401)
-    this_is_never_executed()
+# @app.route('/login')
+# def login():
+#     abort(401)
+#     this_is_never_executed()
 
 
 if __name__ == "__main__":

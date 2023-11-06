@@ -1,29 +1,93 @@
 <html>
-  <style>
-    body{ 
-      font-size: 15pt;
-      font-family: arial;
-    }
-  </style>
 
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+</head>
 
 <body>
-  <h1>Some famous Computer Scientists</h1>
-  <div>{{data}}</div>
+    <h1>Food Delivery Logger</h1>
+    <div>{{data}}</div>
 
-  <div>
-    {% for n in data %}
-    <div>{{n}}</div>
-    {% endfor %}
-  </div>
+    <div>
+        {% for n in data %}
+        <div>{{n}}</div>
+        {% endfor %}
+    </div>
 
-<p><a href="another">Go to the other page</a></p>
+    <!-- <p><a href="another">Go to the other page</a></p> -->
 
-<form method="POST" action="/add">
-<p>Name of new computer scientist: <input type="text" name="name"> <input type="submit" value="Add"></p>
-</form>
+    <!-- <form method="POST" action="/add">
+        <p>Name of new computer scientist: <input type="text" name="name"> <input type="submit" value="Add"></p>
+    </form> -->
+
+    <!-- Table Selection Form -->
+    <!-- <form method="POST" action="/select"> -->
+    <label for="table">Select Table:</label>
+    <select name="table" id="table">
+            <option value="drivers" {% if selected_table == 'drivers' %}selected{% endif %}>Drivers</option>
+            <option value="addresses" {% if selected_table == 'addresses' %}selected{% endif %}>Addresses</option>
+            <option value="customers_details" {% if selected_table == 'customers_details' %}selected{% endif %}>Customers</option>
+            <option value="restaurants_details" {% if selected_table == 'restaurants_details' %}selected{% endif %}>Restaurants</option>
+            <option value="orders_details" {% if selected_table == 'orders_details' %}selected{% endif %}>Orders</option>
+            <option value="cook_menus" {% if selected_table == 'cook_menus' %}selected{% endif %}>Menu Information</option>
+            <option value="receive_order" {% if selected_table == 'receive_order' %}selected{% endif %}>Order Delivered Time</option>
+            <option value="ordered_menu" {% if selected_table == 'ordered_menu' %}selected{% endif %}>Order, Menu, and Restaurant</option>
+        </select>
+    <!-- Submit Button for Table Selection -->
+    <!-- <input type="submit" value="Select Table"> -->
+    <!-- </form> -->
+
+    <!-- Filter Form -->
+    <form method="POST" action="/filter1">
+        <label for="attributes">Filter:</label>
+        <!-- Attributes Dropdown -->
+        <select id="attributes" name="attributes">
+            {% for o in attributes %}
+            <option value="{{ o }}">{{ o }}</option>
+            {% endfor %}
+        </select>
+        <!-- Submit Button for Filter -->
+        <!-- <input type="submit" value="Apply Filter"> -->
+    </form>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#table').change(function() {
+                var selectedTable = $(this).val();
+                // Clear the attributes dropdown before making a new request
+                $('#attributes').empty();
+                $.getJSON('/_get_columns', {
+                    selected_table: selectedTable
+                }).done(function(data) {
+                    var attributeDropdown = $('#attributes');
+                    attributeDropdown.append($('<option>', { // Default option
+                        value: "",
+                        text: "Select an attribute"
+                    }));
+                    data.column_names.forEach(function(column) {
+                        attributeDropdown.append($('<option>', {
+                            value: column,
+                            text: column
+                        }));
+                    });
+                });
+
+                // Request the table data as an HTML fragment
+                $.get('/_get_table_data', {
+                    table_name: selectedTable
+                }).done(function(data) {
+                    $('#results').html(data);
+                });
+            });
+        });
+    </script>
+
+    <!-- Results -->
+    <div id="results">
+    </div>
 
 </body>
-
 
 </html>
