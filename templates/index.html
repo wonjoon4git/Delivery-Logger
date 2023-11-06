@@ -5,51 +5,119 @@
 </head>
 
 <body>
-    <h1>Food Delivery Logger</h1>
-    <div>{{data}}</div>
+    <div style="display: flex; justify-content: space-between; align-items: center; width: 80%;">
+        <a href="/main"> 
+            <h1 style="text-align: left;">Food Delivery Logger</h1>
+        </a>
 
-    <div>
-        {% for n in data %}
-        <div>{{n}}</div>
-        {% endfor %}
+        <a href="/"> 
+            <h2 style="text-align: right;">log out</h2>
+        </a>
     </div>
 
-    <!-- <p><a href="another">Go to the other page</a></p> -->
 
-    <!-- <form method="POST" action="/add">
-        <p>Name of new computer scientist: <input type="text" name="name"> <input type="submit" value="Add"></p>
-    </form> -->
-
+    <div style="display: flex; gap: 140px; padding: 10px">
     <!-- Table Selection Form -->
-    <!-- <form method="POST" action="/select"> -->
-    <label for="table">Select Table:</label>
-    <select name="table" id="table">
-            <option value="drivers" {% if selected_table == 'drivers' %}selected{% endif %}>Drivers</option>
-            <option value="addresses" {% if selected_table == 'addresses' %}selected{% endif %}>Addresses</option>
-            <option value="customers_details" {% if selected_table == 'customers_details' %}selected{% endif %}>Customers</option>
-            <option value="restaurants_details" {% if selected_table == 'restaurants_details' %}selected{% endif %}>Restaurants</option>
-            <option value="orders_details" {% if selected_table == 'orders_details' %}selected{% endif %}>Orders</option>
-            <option value="cook_menus" {% if selected_table == 'cook_menus' %}selected{% endif %}>Menu Information</option>
-            <option value="receive_order" {% if selected_table == 'receive_order' %}selected{% endif %}>Order Delivered Time</option>
-            <option value="ordered_menu" {% if selected_table == 'ordered_menu' %}selected{% endif %}>Order, Menu, and Restaurant</option>
-        </select>
-    <!-- Submit Button for Table Selection -->
-    <!-- <input type="submit" value="Select Table"> -->
-    <!-- </form> -->
+        <form method="POST">
+            <label for="table">Select Table:</label>
+                <select name="table" id="table" style="width: 250px; padding: 5px 10px;">
+                    <option value="" selected disabled>Select Table</option>
+                    <option value="drivers" {% if selected_table == 'drivers' %}selected{% endif %}>Drivers</option>
+                    <option value="addresses" {% if selected_table == 'addresses' %}selected{% endif %}>Addresses</option>
+                    <option value="customers_details" {% if selected_table == 'customers_details' %}selected{% endif %}>Customers</option>
+                    <option value="restaurants_details" {% if selected_table == 'restaurants_details' %}selected{% endif %}>Restaurants</option>
+                    <option value="orders_details" {% if selected_table == 'orders_details' %}selected{% endif %}>Orders</option>
+                    <option value="cook_menus" {% if selected_table == 'cook_menus' %}selected{% endif %}>Menu Information</option>
+                    <option value="receive_order" {% if selected_table == 'receive_order' %}selected{% endif %}>Order Delivered Time</option>
+                    <option value="ordered_menu" {% if selected_table == 'ordered_menu' %}selected{% endif %}>Order, Menu, and Restaurant</option>
+                </select>
+            <!-- Submit Button for Table Selection -->
+            <!-- <input type="submit" value="Select Table"> -->
+        </form>
 
-    <!-- Filter Form -->
-    <form method="POST" action="/filter1">
-        <label for="attributes">Filter:</label>
-        <!-- Attributes Dropdown -->
-        <select id="attributes" name="attributes">
-            {% for o in attributes %}
-            <option value="{{ o }}">{{ o }}</option>
-            {% endfor %}
-        </select>
-        <!-- Submit Button for Filter -->
-        <!-- <input type="submit" value="Apply Filter"> -->
-    </form>
+        <!-- Attribute Filter -->
+        <form method="POST">
+            <label for="attributes">Attribute:</label>
+            <!-- Attributes Dropdown -->
+            <select id="attributes" name="attributes" style="width: 350px; padding: 5px 10px;" >
+                <!-- Placeholder -->
+                <option value="" selected disabled>Attributes not yet available. Select table first</option>
+                {% for o in attributes %}
+                <option value="{{ o }}">{{ o }}</option>
+                {% endfor %}
+            </select>
+            <!-- Submit Button for Filter -->
+            <input type="button" value="View" id="Veiw_Attribute">
 
+            <!-- View Options -->
+            <div style="display: flex; gap: 30px;">    
+                <div>
+                    <input type="radio" id="exactMatch" name="viewType" value="all" checked>
+                    <label for="exactMatch">View All</label>
+                </div>            
+                <div>
+                    <input type="radio" id="similarSearch" name="viewType" value="attribute">
+                    <label for="similarSearch">View Attribute</label>
+                </div>
+            </div>  
+        </form>
+    </div>
+
+
+    <div style="display: flex; gap: 50px; padding: 10px">
+        <!-- Keyword Filter -->
+        <form method="POST">
+            <label for="keyword">Keyword Filter:</label>
+            <input type="text" id="keyword" name="keyword" placeholder="Type in Keyword">
+            <input type="button" value="Apply Keyword Filter", id="Keyword_Filter">
+
+            <!-- Search Options -->
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <div>
+                    <input type="radio" id="exactMatch" name="searchType" value="exact" checked>
+                    <label for="exactMatch">Exact match</label>
+                </div>
+                <div>
+                    <input type="radio" id="similarSearch" name="searchType" value="similar">
+                    <label for="similarSearch">Similar keyword</label>
+                </div>
+                <div>
+                    <input type="radio" id="caseInsensitive" name="searchType" value="caseInsensitive">
+                    <label for="caseInsensitive">Case insensitive</label>
+                </div>
+            </div>
+        </form>
+
+        <!-- Range Filter -->
+        <form method="POST">
+            <label for="rangeStart">Range Start:</label>
+            <input type="text" id="rangeStart" name="rangeStart" placeholder="Start">
+        
+            <label for="rangeEnd">Range End:</label>
+            <input type="text" id="rangeEnd" name="rangeEnd" placeholder="End">
+
+            <!-- Order By Options -->
+            <div>
+                <label for="orderBy">Order By:</label>
+                <select id="orderBy" name="orderBy">
+                    <option value="asc">Ascending</option>
+                    <option value="desc">Descending</option>
+                </select>
+            <input type="button" value="Apply Range Filter" id="Range_Filter">
+            </div>
+            
+        </form>
+    </div>
+
+
+
+    <!-- Results -->
+    <div id="results">
+    </div>
+
+
+
+    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script type="text/javascript">
@@ -58,6 +126,7 @@
                 var selectedTable = $(this).val();
                 // Clear the attributes dropdown before making a new request
                 $('#attributes').empty();
+                $('#keyword').empty();
                 $.getJSON('/_get_columns', {
                     selected_table: selectedTable
                 }).done(function(data) {
@@ -81,13 +150,93 @@
                     $('#results').html(data);
                 });
             });
+
+        });
+
+        // Handle the "View" button click
+        $('#Veiw_Attribute').click(function() {
+            var selectedTable = $('#table').val();
+            var selectedAttribute = $('#attributes').val();
+            var viewType = $('input[name="viewType"]:checked').val();
+
+            if(selectedTable) {
+                $.get('/_get_column_data', {
+                    table_name: selectedTable,
+                    column: selectedAttribute,
+                    view_type: viewType
+                }).done(function(data) {
+                    $('#results').html(data);
+                }).fail(function() {
+                    alert('Error: Could not retrieve data');
+                });
+            }
+        });
+
+        // Handle the "Apply Keyword Filter" button click
+        $('#Keyword_Filter').click(function() {
+
+            var selectedTable = $('#table').val();
+            var selectedAttribute = $('#attributes').val();
+            var selectedKeyword= $('#keyword').val();
+            var searchType = $('input[name="searchType"]:checked').val();
+            var viewType = $('input[name="viewType"]:checked').val();
+
+            if(selectedTable) {
+                $.get('/_get_constraint_data', {
+                    table_name: selectedTable,
+                    column: selectedAttribute,
+                    keyword: selectedKeyword,
+                    search_type: searchType,
+                    view_type: viewType
+                }).done(function(data) {
+                    $('#results').html(data);
+                }).fail(function() {
+                    alert('Error: Could not retrieve data');
+                });
+            }
+        });
+        
+        $('#Range_Filter').click(function() {
+            var selectedTable = $('#table').val();
+            var selectedAttribute = $('#attributes').val();
+            var rangeStart = $('#rangeStart').val();
+            var rangeEnd = $('#rangeEnd').val();
+            var orderBy = $('#orderBy').val();  // Get the order by value
+            var viewType = $('input[name="viewType"]:checked').val();
+
+        
+            if(selectedTable) {
+                $.get('/_get_range_data', {
+                    table_name: selectedTable,
+                    column: selectedAttribute,
+                    range_start: rangeStart,
+                    range_end: rangeEnd,
+                    order_by: orderBy,
+                    view_type: viewType 
+                }).done(function(data) {
+                    $('#results').html(data);
+                }).fail(function() {
+                    alert('Error: Could not retrieve data');
+                });
+            }
+        });
+
+        // Use event delegation to attach events to dynamically created elements
+        $(document).on('click', '.delete-btn', function() {
+            //  delete logic here
+            alert("Delete function in progess");
+        });
+
+        $(document).on('click', '.edit-btn', function() {
+            //  edit logic here
+            alert("Edit function in progress");
+        });
+
+        $(document).on('click', '.add-btn', function() {
+            //  edit logic here
+            alert("Add function in progress");
         });
     </script>
-
-    <!-- Results -->
-    <div id="results">
-    </div>
-
 </body>
 
 </html>

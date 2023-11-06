@@ -18,23 +18,10 @@ tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
 
 
-#
-# The following is a dummy URI that does not connect to a valid database. You will need to modify it to connect to your Part 2 database in order to use the data.
-#
-# XXX: The URI should be in the format of:
-#
-#     postgresql://USER:PASSWORD@34.75.94.195/proj1part2
-#
-# For example, if you had username gravano and password foobar, then the following line would be:
-#
-#     DATABASEURI = "postgresql://gravano:foobar@34.75.94.195/proj1part2"
-#
+
+
+# Create a database engine that knows how to connect to the URI.
 DATABASEURI = "postgresql://wc2852:278599@34.74.171.121/proj1part2"
-
-
-#
-# This line creates a database engine that knows how to connect to the URI above.
-#
 engine = create_engine(DATABASEURI)
 
 #
@@ -92,64 +79,11 @@ def teardown_request(exception):
 # see for decorators: http://simeonfranklin.com/blog/2012/jul/1/python-decorators-in-12-steps/
 #
 @app.route('/')
+def login():
+  return render_template("login.html")
+
+@app.route('/main')
 def index():
-  """
-  request is a special object that Flask provides to access web request information:
-
-  request.method:   "GET" or "POST"
-  request.form:     if the browser submitted a form, this contains the data in the form
-  request.args:     dictionary of URL arguments, e.g., {a:1, b:2} for http://localhost?a=1&b=2
-
-  See its API: https://flask.palletsprojects.com/en/2.0.x/api/?highlight=incoming%20request%20data
-
-  """
-
-  # DEBUG: this is debugging code to see what request looks like
-  print(request.args)
-
-
-  #
-  # example of a database query
-  #
-  # cursor = g.conn.execute("SELECT name FROM test")
-  # names = []
-  # for result in cursor:
-  #   names.append(result['name'])  # can also be accessed using result[0]
-  # cursor.close()
-
-  #
-  # Flask uses Jinja templates, which is an extension to HTML where you can
-  # pass data to a template and dynamically generate HTML based on the data
-  # (you can think of it as simple PHP)
-  # documentation: https://realpython.com/primer-on-jinja-templating/
-  #
-  # You can see an example template in templates/index.html
-  #
-  # context are the variables that are passed to the template.
-  # for example, "data" key in the context variable defined below will be
-  # accessible as a variable in index.html:
-  #
-  #     # will print: [u'grace hopper', u'alan turing', u'ada lovelace']
-  #     <div>{{data}}</div>
-  #
-  #     # creates a <div> tag for each element in data
-  #     # will print:
-  #     #
-  #     #   <div>grace hopper</div>
-  #     #   <div>alan turing</div>
-  #     #   <div>ada lovelace</div>
-  #     #
-  #     {% for n in data %}
-  #     <div>{{n}}</div>
-  #     {% endfor %}
-  #
-  # context = dict(data = names)
-
-
-  #
-  # render_template looks in the templates/ folder for files.
-  # for example, the below file reads template/index.html
-  #
   return render_template("index.html")
 
 #
@@ -202,6 +136,67 @@ def get_table_data():
     return render_template('partials/table_data.html', rows=results)
 
 
+# Rendering the entire table for user's selection from "Select Table"
+@app.route('/_get_column_data')
+def get_column_data():
+    table_name = request.args.get('table_name', '', type=str)
+    column = request.args.get('column', '', type=str)
+    view_type = request.args.get('view_type', '', type=str)
+
+    if view_type == "attribute":
+      query = text(f"SELECT {column} FROM {table_name}")
+    else:
+      query = text(f"SELECT * FROM {table_name}")
+    
+    results = engine.execute(query).fetchall()
+    return render_template('partials/table_data.html', rows=results)
+
+  
+@app.route('/_get_constraint_data')
+def get_constraint_data():
+    table_name = request.args.get('table_name', '', type=str)
+    column = request.args.get('column', '', type=str)
+    keyword = request.args.get('keyword', '', type=str)
+    search_type = request.args.get('search_type', '', type=str)
+    view_type = request.args.get('view_type', '', type=str)
+
+    if view_type == "attribute":
+      view = column
+    else:
+      view = "*"
+      
+    # Determine the type of search
+    if search_type == "exact":
+      query = text(f"SELECT {view} FROM {table_name} WHERE {table_name}.{column} = \'{keyword}\'")
+    elif search_type == "similar":
+      query = text(f"SELECT {view} FROM {table_name} WHERE {table_name}.{column} LIKE \'%{keyword}%\'")
+    elif search_type == "caseInsensitive":
+      query = text(f"SELECT {view} FROM {table_name} WHERE {table_name}.{column} ILIKE \'%{keyword}%\'")
+
+    results = engine.execute(query).fetchall()
+    return render_template('partials/table_data.html', rows=results)
+  
+  
+@app.route('/_get_range_data')
+def get_range_data():
+    table_name = request.args.get('table_name', '', type=str)
+    column = request.args.get('column', '', type=str)
+    range_start = request.args.get('range_start', '', type=str)
+    range_end = request.args.get('range_end', '', type=str)
+    order_by = request.args.get('order_by', 'asc', type=str)  # Default to ascending
+    view_type = request.args.get('view_type', '', type=str)
+
+    if view_type == "attribute":
+      view = column
+    else:
+      view = "*"
+
+    # Adjust query for range
+    query = text(f"SELECT {view} FROM {table_name} WHERE {table_name}.{column} BETWEEN \'{range_start}\' AND \'{range_end}\' ORDER BY {column} {order_by.upper()}")
+
+    results = engine.execute(query).fetchall()
+    return render_template('partials/table_data.html', rows=results)
+
 # @app.route('/filter1', methods=['POST'])
 # def filter():
 
@@ -235,6 +230,6 @@ if __name__ == "__main__":
 
     HOST, PORT = host, port
     print("running on %s:%d" % (HOST, PORT))
-    app.run(host=HOST, port=PORT, debug=debug, threaded=threaded)
+    app.run(host=HOST, port=PORT, debug=True, threaded=threaded)
 
   run()

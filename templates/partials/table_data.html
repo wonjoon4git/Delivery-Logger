@@ -5,17 +5,26 @@
             {% for col in rows[0].keys() %}
             <th>{{ col }}</th>
             {% endfor %}
+            <th>Edit / Delete</th>
         </tr>
     </thead>
     <tbody>
         {% for row in rows %}
         <tr>
-            {% for data in row.values() %}
-            <td>{{ data }}</td>
+            {% for data in row.values() %} 
+            <td>{{ data }}</td> 
             {% endfor %}
-        </tr>
+            <td>
+                <button  class= "edit-btn" >Edit</button> 
+                <button class= "delete-btn">Delete</button>
+            </td> 
+        </tr> 
         {% endfor %}
+        <div style="padding: 10px;">
+            <button style = "padding: 10px; width: 80%"   class="add-btn">Add New Data</button>
+        </div>  
     </tbody>
+    
     {% else %}
     <tr>
         <td colspan="100%">No data available for the selected table.</td>

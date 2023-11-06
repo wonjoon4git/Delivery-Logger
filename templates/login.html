@@ -1,0 +1,32 @@
+<!-- login.html -->
+<form id="login-form" style ="display: flex; height: 90vh;
+            gap: 30px;
+            justify-content: center;
+            align-items: center;">
+
+    <!-- ... your login fields ... -->
+    <form id="login-form">
+        <div>
+            <div> 
+                <input type="text" placeholder="Login ID" >
+                
+            </div> 
+            <div> 
+                <input type="password" placeholder="Password" >
+            </div> 
+        </div>
+        <input type="submit" value="Login" style="padding: 30px; font-size: 1.5rem;">
+    </form>
+</form>
+  
+<script>
+  document.getElementById('login-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    // Perform validation and authentication here
+    // ...
+  
+    // If successful, redirect to index.html
+    window.location.href = 'main';
+  });
+ </script>
+  
