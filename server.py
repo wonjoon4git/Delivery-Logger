@@ -23,18 +23,8 @@ app = Flask(__name__, template_folder=tmpl_dir)
 # Create a database engine that knows how to connect to the URI.
 DATABASEURI = "postgresql://wc2852:278599@34.74.171.121/proj1part2"
 engine = create_engine(DATABASEURI)
-
-#
-# Example of running queries in your database
-# Note that this will probably not work if you already have a table named 'test' in your database, containing meaningful data. This is only an example showing you how to run queries in your database using SQLAlchemy.
-#
 conn = engine.connect()
 
-# conn.execute("""CREATE TABLE IF NOT EXISTS test (
-#   id serial,
-#   name text
-# );""")
-# conn.execute("""INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace');""")
 
 
 @app.before_request
@@ -65,7 +55,7 @@ def teardown_request(exception):
     pass
 
 
-#
+
 # @app.route is a decorator around index() that means:
 #   run index() whenever the user tries to access the "/" path using a GET request
 #
@@ -78,14 +68,19 @@ def teardown_request(exception):
 # see for routing: https://flask.palletsprojects.com/en/2.0.x/quickstart/?highlight=routing
 # see for decorators: http://simeonfranklin.com/blog/2012/jul/1/python-decorators-in-12-steps/
 #
+
+
+# Directs to first page, login.html
 @app.route('/')
 def login():
   return render_template("login.html")
 
+# Directs to the main page, index.html
 @app.route('/main')
 def index():
   return render_template("index.html")
 
+# Directs to the add page, add.html, with table_name and column_names defined
 @app.route('/add')
 def add():
   table_name = request.args.get('table_name')
@@ -94,19 +89,20 @@ def add():
   column_names = [column['name'] for column in columns]
   return render_template("add.html", table_name = table_name,  column_names = column_names)
 
+# Function to add data to the databse
 @app.route('/_add_data')
 def add_data():
-  # Extract data from form
+  # Extract data
   table_name = request.args.get('table_name', '', type=str)
   values = request.args.get('values', '', type=str)
   column_names = request.args.get('columns', '', type=str)
-  # Now add this data to your dataset, e.g., a database or a CSV file
-  # You need to implement the logic to insert data into your dataset
+  
+  # Now add this data to the database
   engine.execute(f"INSERT INTO {table_name} ({column_names}) VALUES ({values});")
   return render_template("index.html")
 
 
-
+# Directs to the delete page, add.html, with table_name and column_names defined
 @app.route('/delete')
 def delete():
   table_name = request.args.get('table_name')
@@ -115,14 +111,16 @@ def delete():
   column_name = [column['name'] for column in columns][0]
   return render_template("delete.html", table_name = table_name,  column_name = column_name)
 
+
+# Function to delete data to the databse
 @app.route('/_delete_data')
 def delete_data():
-  # Extract data from form
+  # Extract data 
   table_name = request.args.get('table_name', '', type=str)
   value = request.args.get('value', '', type=str)
   column_name = request.args.get('column', '', type=str)
-  # Now add this data to your dataset, e.g., a database or a CSV file
-  # You need to implement the logic to insert data into your dataset
+  
+  # Now delete this data from database 
   engine.execute(f"DELETE FROM {table_name} WHERE {table_name}.{column_name} = {value};")
   return render_template("index.html")
 

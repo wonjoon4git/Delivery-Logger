@@ -4,7 +4,6 @@
             justify-content: center;
             align-items: center;">
 
-    <!-- ... your login fields ... -->
     <form id="login-form">
         <div>
             <div> 
@@ -19,12 +18,12 @@
     </form>
 </form>
   
+<!-- Scripts -->
 <script>
   document.getElementById('login-form').addEventListener('submit', function(event) {
     event.preventDefault();
-    // Perform validation and authentication here
+    // In real world situation, Perform validation and authentication here
     // ...
-  
     // If successful, redirect to index.html
     window.location.href = 'main';
   });

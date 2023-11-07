@@ -1,11 +1,13 @@
 
 <html>
+<!-- add.html -->
 
 <head>
     <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
 </head>
 
 <body>
+    <!-- Site Headding -->
     <div style="display: flex; justify-content: space-between; align-items: center; width: 80%;">
         <a href="/main"> 
             <h1 style="text-align: left;">Food Delivery Logger</h1>
@@ -36,10 +38,9 @@
         </form>
     </div>
 
+    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
-
     <script type="text/javascript">
         var table_name = "{{ table_name }}";
         var column_names = {{ column_names | tojson }};

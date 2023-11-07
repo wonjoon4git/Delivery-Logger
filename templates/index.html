@@ -1,15 +1,16 @@
 <html>
+<!-- index.html -->
 
 <head>
     <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
 </head>
 
 <body>
+    <!-- Site Headding -->
     <div style="display: flex; justify-content: space-between; align-items: center; width: 80%;">
         <a href="/main"> 
             <h1 style="text-align: left;">Food Delivery Logger</h1>
         </a>
-
         <a href="/"> 
             <h2 style="text-align: right;">log out</h2>
         </a>
@@ -17,7 +18,7 @@
 
 
     <div style="display: flex; gap: 140px; padding: 10px">
-    <!-- Table Selection Form -->
+        <!-- Table Selection Form -->
         <form method="POST">
             <label for="table">Select Table:</label>
                 <select name="table" id="table" style="width: 250px; padding: 5px 10px;">
@@ -88,6 +89,7 @@
             </div>
         </form>
 
+
         <!-- Range Filter -->
         <form method="POST">
             <label for="rangeStart">Range Start:</label>
@@ -110,8 +112,7 @@
     </div>
 
 
-
-    <!-- Results -->
+    <!-- Show Results Table-->
     <div id="results">
     </div>
 
@@ -153,11 +154,12 @@
 
         });
 
+
         // Handle the "View" button click
         $('#Veiw_Attribute').click(function() {
             var selectedTable = $('#table').val();
             var selectedAttribute = $('#attributes').val();
-            var viewType = $('input[name="viewType"]:checked').val();
+            var viewType = $('input[name="viewType"]:checked').val(); // Since we provide two viewing options
 
             if(selectedTable) {
                 $.get('/_get_column_data', {
@@ -196,6 +198,7 @@
             }
         });
         
+        // Handle the "Apply Range Filter" button click
         $('#Range_Filter').click(function() {
             var selectedTable = $('#table').val();
             var selectedAttribute = $('#attributes').val();
@@ -203,7 +206,6 @@
             var rangeEnd = $('#rangeEnd').val();
             var orderBy = $('#orderBy').val();  // Get the order by value
             var viewType = $('input[name="viewType"]:checked').val();
-
         
             if(selectedTable) {
                 $.get('/_get_range_data', {
@@ -221,17 +223,15 @@
             }
         });
 
-        // Use event delegation to attach events to dynamically created elements
+
+        // On click of "Delete" button, we move to delete.html
         $(document).on('click', '.delete-btn', function() {
             table_name = $('#table').val();
             window.location.href = 'delete?table_name='+ encodeURIComponent(table_name);
         });
 
-        $(document).on('click', '.edit-btn', function() {
-            //  edit logic here
-            window.location.href = 'edit';
-        });
 
+        // On click of "Add New Data" button, we move to add.html
         $(document).on('click', '.add-btn', function() {
             table_name = $('#table').val();
             window.location.href = 'add?table_name='+ encodeURIComponent(table_name);
