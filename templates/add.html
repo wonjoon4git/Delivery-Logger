@@ -1,0 +1,54 @@
+
+<html>
+
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+</head>
+
+<body>
+    <div style="display: flex; justify-content: space-between; align-items: center; width: 80%;">
+        <a href="/main"> 
+            <h1 style="text-align: left;">Food Delivery Logger</h1>
+        </a>
+
+        <a href="/"> 
+            <h2 style="text-align: right;">log out</h2>
+        </a>
+    </div>
+    
+    
+    <!-- Add Data Form -->
+    <div style="display: flex; justify-content: space-between; align-items: center; width: 50%; padding: 30px">
+        <h3>Add data for the {{ table_name }} table</h3>
+
+        <form action="/add_data" method="post">
+            {% for column in column_names %}
+            <div style = " padding: 10px;">
+                <label for="{{ column }}">{{ column }}:</label>
+                <input type="text" id="{{ column }}" name="{{ column }}" required>
+            </div>
+            {% endfor %}
+            <input type="button" style = "padding: 10px; align-items: center;" id = "Add_Data" value = "Add Data">
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        // Handle the "Add Data" button click
+        $('#Add_Data').click(function() {
+            $.get('/add_data', {
+                table_name: table_name,
+                column_names: column_names,
+                alert(table_name)
+                alert(column_names)
+            }).done(function(data) {
+                $('#results').html(data);
+            }).fail(function() {
+                alert('Error: Could not retrieve data');
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -86,17 +86,40 @@ def login():
 def index():
   return render_template("index.html")
 
-#
-# This is an example of a different path.  You can see it at:
-#
-#     localhost:8111/another
-#
-# Notice that the function name is another() rather than index()
-# The functions for each app.route need to have different names
-#
-# @app.route('/another')
-# def another():
-#   return render_template("another.html")
+@app.route('/add')
+def add():
+  table_name = request.args.get('table_name')
+  inspector = inspect(engine)
+  columns = inspector.get_columns(table_name)
+  column_names = [column['name'] for column in columns]
+  return render_template("add.html", table_name = table_name,  column_names = column_names)
+
+@app.route('/add_data', methods=['POST'])
+def add_data():
+    # Extract data from form
+    column_names = request.args.get('column_names')
+    table_name = request.args.get('table_name', '', type=str)
+    values = {column: request.form.get(column) for column in column_names}
+    print(column_names)
+    # Now add this data to your dataset, e.g., a database or a CSV file
+    # You need to implement the logic to insert data into your dataset
+    engine.execute(f"INSERT INTO {table_name} VALUES {values};")
+    
+    query = text(f"SELECT * FROM {table_name}")
+    results = engine.execute(query).fetchall()
+    return render_template('partials/table_data.html', rows=results)
+
+
+
+@app.route('/delete')
+def delete():
+  return render_template("delete.html")
+
+@app.route('/edit')
+def edit():
+  return render_template("edit.html")
+
+
 
 # Get the column labels of table
 @app.route('/_get_columns')
@@ -197,16 +220,11 @@ def get_range_data():
     results = engine.execute(query).fetchall()
     return render_template('partials/table_data.html', rows=results)
 
-# @app.route('/filter1', methods=['POST'])
-# def filter():
 
 
-# @app.route('/login')
-# def login():
-#     abort(401)
-#     this_is_never_executed()
 
-
+  
+  
 if __name__ == "__main__":
   import click
 
