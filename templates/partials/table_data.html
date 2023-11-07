@@ -5,7 +5,7 @@
             {% for col in rows[0].keys() %}
             <th>{{ col }}</th>
             {% endfor %}
-            <th>Edit / Delete</th>
+            <th> Delete</th>
         </tr>
     </thead>
     <tbody>
@@ -15,7 +15,6 @@
             <td>{{ data }}</td> 
             {% endfor %}
             <td>
-                <button  class= "edit-btn" >Edit</button> 
                 <button class= "delete-btn">Delete</button>
             </td> 
         </tr> 

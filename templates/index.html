@@ -223,8 +223,8 @@
 
         // Use event delegation to attach events to dynamically created elements
         $(document).on('click', '.delete-btn', function() {
-            //  delete logic here
-            window.location.href = 'delete';
+            table_name = $('#table').val();
+            window.location.href = 'delete?table_name='+ encodeURIComponent(table_name);
         });
 
         $(document).on('click', '.edit-btn', function() {
@@ -233,7 +233,6 @@
         });
 
         $(document).on('click', '.add-btn', function() {
-            //  edit logic here
             table_name = $('#table').val();
             window.location.href = 'add?table_name='+ encodeURIComponent(table_name);
         });

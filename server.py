@@ -94,30 +94,37 @@ def add():
   column_names = [column['name'] for column in columns]
   return render_template("add.html", table_name = table_name,  column_names = column_names)
 
-@app.route('/add_data', methods=['POST'])
+@app.route('/_add_data')
 def add_data():
-    # Extract data from form
-    column_names = request.args.get('column_names')
-    table_name = request.args.get('table_name', '', type=str)
-    values = {column: request.form.get(column) for column in column_names}
-    print(column_names)
-    # Now add this data to your dataset, e.g., a database or a CSV file
-    # You need to implement the logic to insert data into your dataset
-    engine.execute(f"INSERT INTO {table_name} VALUES {values};")
-    
-    query = text(f"SELECT * FROM {table_name}")
-    results = engine.execute(query).fetchall()
-    return render_template('partials/table_data.html', rows=results)
+  # Extract data from form
+  table_name = request.args.get('table_name', '', type=str)
+  values = request.args.get('values', '', type=str)
+  column_names = request.args.get('columns', '', type=str)
+  # Now add this data to your dataset, e.g., a database or a CSV file
+  # You need to implement the logic to insert data into your dataset
+  engine.execute(f"INSERT INTO {table_name} ({column_names}) VALUES ({values});")
+  return render_template("index.html")
 
 
 
 @app.route('/delete')
 def delete():
-  return render_template("delete.html")
+  table_name = request.args.get('table_name')
+  inspector = inspect(engine)
+  columns = inspector.get_columns(table_name)
+  column_name = [column['name'] for column in columns][0]
+  return render_template("delete.html", table_name = table_name,  column_name = column_name)
 
-@app.route('/edit')
-def edit():
-  return render_template("edit.html")
+@app.route('/_delete_data')
+def delete_data():
+  # Extract data from form
+  table_name = request.args.get('table_name', '', type=str)
+  value = request.args.get('value', '', type=str)
+  column_name = request.args.get('column', '', type=str)
+  # Now add this data to your dataset, e.g., a database or a CSV file
+  # You need to implement the logic to insert data into your dataset
+  engine.execute(f"DELETE FROM {table_name} WHERE {table_name}.{column_name} = {value};")
+  return render_template("index.html")
 
 
 
@@ -139,16 +146,7 @@ def get_columns():
     # Return the column names as a list
     return jsonify(column_names=column_names)
 
-# @app.route('/select', methods=['POST'])
-# def select():
-#     table_name = request.form['table']
-#     query = text(f"SELECT * FROM {table_name}")
-#     try:
-#       results = engine.execute(query).fetchall()
-#       rows = [dict(row) for row in results]
-#       return jsonify(rows=rows)
-#     except Exception as e:
-#       return str(e), 500
+
 
 # Rendering the entire table for user's selection from "Select Table"
 @app.route('/_get_table_data')

@@ -19,7 +19,11 @@
     
     <!-- Add Data Form -->
     <div style="display: flex; justify-content: space-between; align-items: center; width: 50%; padding: 30px">
-        <h3>Add data for the {{ table_name }} table</h3>
+        
+        <div>
+            <h3>Add data for the {{ table_name }} table.</h3>
+            <h3>Don't forget to include 'single quotation marks' if you are inputting a string</h3>
+        <div>
 
         <form action="/add_data" method="post">
             {% for column in column_names %}
@@ -34,18 +38,38 @@
 
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
     <script type="text/javascript">
-        // Handle the "Add Data" button click
-        $('#Add_Data').click(function() {
-            $.get('/add_data', {
-                table_name: table_name,
-                column_names: column_names,
-                alert(table_name)
-                alert(column_names)
-            }).done(function(data) {
-                $('#results').html(data);
-            }).fail(function() {
-                alert('Error: Could not retrieve data');
+        var table_name = "{{ table_name }}";
+        var column_names = {{ column_names | tojson }};
+        $(document).ready(function() {
+            $('#Add_Data').click(function() {
+                // Here you would use AJAX to POST the data, not GET
+                // Since you're using jQuery, $.post or $.ajax with method 'POST' could be used
+                // This is just a skeleton to show where the variables would be used.
+                
+                // Collect data from the form inputs
+                var formDataArray = [];
+                var columnNamesArray= [];
+                column_names.forEach(function(name) {
+                    var value =  $('#' + name).val();
+                    columnNamesArray.push(name);
+                    formDataArray.push(value);
+                });
+                var formDataString = formDataArray.join(",");
+                var columnNamesString = columnNamesArray.join(",");
+
+                // Make the POST request using the form data
+                $.get('/_add_data', {
+                    table_name: table_name,
+                    values: formDataString,
+                    columns: columnNamesString
+                }).done(function() {
+                    alert("Successfully Added"); 
+                }).fail(function() {
+                    alert('Error: Could not Add data. Check syntax or Participation constraints');
+                });
             });
         });
     </script>

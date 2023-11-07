@@ -15,7 +15,48 @@
             <h2 style="text-align: right;">log out</h2>
         </a>
     </div>
-    Here we delete data
+    <!-- Delete Form -->
+    <div style="display: flex; justify-content: space-between; align-items: center; width: 50%; padding: 30px">
+        
+        <div>
+            <h3>Delete data for the {{ table_name }} table.</h3>
+            <h3>Don't forget to include 'single quotation marks' if you are inputting a string</h3>
+        <div>
+
+        <form action="/add_data" method="post">
+            <div style = " padding: 10px;">
+                <label for="{{ column_name }}">{{ column_name }}:</label>
+                <input type="text" id="{{ column_name }}" name="{{ column_name }}" required>
+            </div>
+            <input type="button" style = "padding: 10px; align-items: center;" id = "Delete_Data" value = "Delete Data">
+        </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+    <script type="text/javascript">
+        var table_name = "{{ table_name }}";
+        var column_name = "{{column_name}}";
+        $(document).ready(function() {
+            $('#Delete_Data').click(function() {
+                
+                var value =  $('#' + column_name).val();
+
+                // Make the POST request using the form data
+                $.get('/_delete_data', {
+                    table_name: table_name,
+                    value: value,
+                    column: column_name
+                }).done(function() {
+                    alert("Successfully Deleted"); 
+                }).fail(function() {
+                    alert('Error: Could not Delete data. Check syntax or Participation constraints');
+                });
+            });
+        });
+    </script>
 </body>
+
 
 </html>
