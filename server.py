@@ -80,6 +80,11 @@ def login():
 def index():
   return render_template("index.html")
 
+# Directs to the help page, help.html
+@app.route('/help')
+def help():
+  return render_template("help.html")
+
 # Directs to the add page, add.html, with table_name and column_names defined
 @app.route('/add')
 def add():

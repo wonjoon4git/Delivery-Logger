@@ -1,0 +1,46 @@
+
+<html>
+<!-- help.html -->
+
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+</head>
+
+<body>
+    <!-- Site Headding -->
+    <div style="display: flex; justify-content: space-between; align-items: center; width: 80%;">
+        <a href="/main"> 
+            <h1 style="text-align: left;">Food Delivery Logger</h1>
+        </a>
+
+        <a href="/help"> 
+            <h2 style="text-align: center;">help</h2>
+        </a>
+
+        <a href="/"> 
+            <h2 style="text-align: right;">log out</h2>
+        </a>
+    </div>
+
+    <div>
+        <h1>Purpose of The app</h1>
+            <p style = "padding: 20px">
+                This app only provides limitted functionality, for the purpose of database integrity.
+                You may not be able to add, delete datas with multiple constraints. 
+                In order to manipulate the whole database, you must use postgreSQL with constraints ER Diagram in mind. 
+                <br>
+                You may access the database via following credentials: "postgresql://wc2852:278599@34.74.171.121/proj1part2". 
+            </p>
+        <h1>Trouble Shooting</h1>
+            <p style = "padding: 20px">
+                Full code of this web application is accessible at "https://github.com/wonjoon4git/Delivery-Logger".
+                <br><br>
+                If you need further assistance, contact: 
+                <br>
+                Wonjoon Choi, wc2852@columbia.edu 
+                <br>
+                Ella Kim, yk3040@columbia.edu
+            </p>
+    </div>
+
+</body>
