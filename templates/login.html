@@ -1,22 +1,25 @@
 <!-- login.html -->
-<form id="login-form" style ="display: flex; height: 90vh;
-            gap: 30px;
-            justify-content: center;
-            align-items: center;">
+<html>
+    <head>
+        <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+    </head>
 
-    <form id="login-form">
-        <div>
+    <body>
+    <form id = 'login-form'>
+        <h2>Welcome to Food Deliver Logger</h2>
+        <h4>Enter login information to begin: </h4>
+        <div id = "log-in">
             <div> 
                 <input type="text" placeholder="Login ID" >
-                
             </div> 
             <div> 
                 <input type="password" placeholder="Password" >
             </div> 
+            <input type="submit" value="Login" id = "login-button">
         </div>
-        <input type="submit" value="Login" style="padding: 30px; font-size: 1.5rem;">
     </form>
 </form>
+</body>
   
 <!-- Scripts -->
 <script>
@@ -29,3 +32,4 @@
   });
  </script>
   
+</html>

@@ -5,15 +5,86 @@ body {
     line-height: 1.6;
     margin: 0;
     padding: 0;
-    background: #ebebeb;
+    background: white;
     color: rgb(0, 0, 0);
 }
 
-h1 {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+h1, h2 {
+    color: #black;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 300;
     margin-left: 10px;
 }
 
+h4 {
+    color: #0041a5;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 150;
+    margin-left: 10px;
+}
+
+#login-button {
+    font-size: 20px;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 19px 25px;
+    cursor: pointer;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+    /* Shadow effect */
+    transition: background-color 0.3s ease;
+}
+
+#View_Attribute, #Keyword_Filter, #Range_Filter, .delete-btn, .add-btn, #Add_Data, #Delete_Data {
+    /* display: block; */
+    font-size: 13px;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 10px 15px;
+    cursor: pointer;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+    /* Shadow effect */
+    transition: background-color 0.3s ease;
+    /* Smooth hover transition */
+}
+
+#View_Attribute:hover, #Keyword_Filter:hover, #Range_Filter:hover,
+.delete-btn:hover, .add-btn:hover, #Add_Data:hover, #Delete_Data:hover, #login-button:hover {
+    background-color: #0041a5;
+    /* Slightly darker blue on hover */
+}
+
+#log-in {
+    display: flex;
+    height: 90vh;
+    gap: 30px;
+    justify-content: center;
+    align-items: center;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    /* margin-top: 30px; */
+    font-size: 50px;
+    color: #0041a5;
+    margin-bottom: 30px;
+}
+
+#website {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    width: 80%;
+}
+
+#tabs {
+    text-align: right;
+}
 
 /* Container for the content */
 
@@ -42,7 +113,14 @@ header a {
     font-size: 16px;
 }
 
-
+p {
+    color: #black;
+    text-align: right;
+    justify-content: right;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    font-size: 13px;
+}
 /* Main content styling */
 
 .main-content {
