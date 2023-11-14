@@ -45,7 +45,7 @@
         <form method="POST">
             <label for="attributes">Attribute:</label>
             <!-- Attributes Dropdown -->
-            <select id="attributes" name="attributes" style="width: 350px; padding: 5px 10px;" >
+            <select multiple id="attributes" name="attributes" style="width: 350px; padding: 5px 10px;" >
                 <!-- Placeholder -->
                 <option value="" selected disabled>Attributes not yet available. Select table first</option>
                 {% for o in attributes %}
@@ -53,7 +53,7 @@
                 {% endfor %}
             </select>
             <!-- Submit Button for Filter -->
-            <input type="button" value="View" id="Veiw_Attribute">
+            <input type="button" value="View" id="View_Attribute">
 
             <!-- View Options -->
             <div style="display: flex; gap: 30px;">    
@@ -161,20 +161,22 @@
 
 
         // Handle the "View" button click
-        $('#Veiw_Attribute').click(function() {
+        $('#View_Attribute').click(function() {
             var selectedTable = $('#table').val();
             var selectedAttribute = $('#attributes').val();
             var viewType = $('input[name="viewType"]:checked').val(); // Since we provide two viewing options
+           // console.log('This is the selected attribute', selectedAttribute);
+           // console.log('This is the jsonifyed ver: ', JSON.stringify(selectedAttribute));
 
             if(selectedTable) {
                 $.get('/_get_column_data', {
                     table_name: selectedTable,
-                    column: selectedAttribute,
+                    column: JSON.stringify(selectedAttribute),
                     view_type: viewType
                 }).done(function(data) {
                     $('#results').html(data);
                 }).fail(function() {
-                    alert('Error: Could not retrieve data');
+                    alert('Error: Could not retrieve data or query. Try again.');
                 });
             }
         });
@@ -191,14 +193,14 @@
             if(selectedTable) {
                 $.get('/_get_constraint_data', {
                     table_name: selectedTable,
-                    column: selectedAttribute,
+                    column: JSON.stringify(selectedAttribute),
                     keyword: selectedKeyword,
                     search_type: searchType,
                     view_type: viewType
                 }).done(function(data) {
                     $('#results').html(data);
                 }).fail(function() {
-                    alert('Error: Could not retrieve data');
+                    alert('Error: Could not retrieve data or query. Try again.');
                 });
             }
         });
@@ -215,7 +217,7 @@
             if(selectedTable) {
                 $.get('/_get_range_data', {
                     table_name: selectedTable,
-                    column: selectedAttribute,
+                    column: JSON.stringify(selectedAttribute),
                     range_start: rangeStart,
                     range_end: rangeEnd,
                     order_by: orderBy,
@@ -223,7 +225,7 @@
                 }).done(function(data) {
                     $('#results').html(data);
                 }).fail(function() {
-                    alert('Error: Could not retrieve data');
+                    alert('Error: Could not retrieve data or query. Try again.');
                 });
             }
         });

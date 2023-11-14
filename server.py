@@ -12,7 +12,8 @@ import os
   # accessible as a variable in index.html:
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
-from flask import Flask, request, render_template, g, redirect, Response, abort, jsonify
+from flask import Flask, request, render_template, g, redirect, Response, abort, jsonify,json
+from sqlalchemy.exc import SQLAlchemyError
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
@@ -161,14 +162,17 @@ def get_table_data():
 
 
 # Rendering the entire table for user's selection from "Select Table"
+# or specific columns based on attributes the user selects.
 @app.route('/_get_column_data')
 def get_column_data():
     table_name = request.args.get('table_name', '', type=str)
-    column = request.args.get('column', '', type=str)
+    column = json.loads(request.args.get('column', '[]'))
+    column_string = ','.join(column)
     view_type = request.args.get('view_type', '', type=str)
 
     if view_type == "attribute":
-      query = text(f"SELECT {column} FROM {table_name}")
+      # app.logger.info(column_string)
+      query = text(f"SELECT {column_string} FROM {table_name}")
     else:
       query = text(f"SELECT * FROM {table_name}")
     
@@ -179,23 +183,24 @@ def get_column_data():
 @app.route('/_get_constraint_data')
 def get_constraint_data():
     table_name = request.args.get('table_name', '', type=str)
-    column = request.args.get('column', '', type=str)
+    column = json.loads(request.args.get('column', '[]'))
+    column_string = ','.join(column)
     keyword = request.args.get('keyword', '', type=str)
     search_type = request.args.get('search_type', '', type=str)
     view_type = request.args.get('view_type', '', type=str)
 
     if view_type == "attribute":
-      view = column
+      view = column_string
     else:
       view = "*"
       
     # Determine the type of search
     if search_type == "exact":
-      query = text(f"SELECT {view} FROM {table_name} WHERE {table_name}.{column} = \'{keyword}\'")
+      query = text(f"SELECT {view} FROM {table_name} WHERE {table_name}.{column_string} = \'{keyword}\'")
     elif search_type == "similar":
-      query = text(f"SELECT {view} FROM {table_name} WHERE {table_name}.{column} LIKE \'%{keyword}%\'")
+      query = text(f"SELECT {view} FROM {table_name} WHERE {table_name}.{column_string} LIKE \'%{keyword}%\'")
     elif search_type == "caseInsensitive":
-      query = text(f"SELECT {view} FROM {table_name} WHERE {table_name}.{column} ILIKE \'%{keyword}%\'")
+      query = text(f"SELECT {view} FROM {table_name} WHERE {table_name}.{column_string} ILIKE \'%{keyword}%\'")
 
     results = engine.execute(query).fetchall()
     return render_template('partials/table_data.html', rows=results)
@@ -204,24 +209,26 @@ def get_constraint_data():
 @app.route('/_get_range_data')
 def get_range_data():
     table_name = request.args.get('table_name', '', type=str)
-    column = request.args.get('column', '', type=str)
+    column = json.loads(request.args.get('column', '[]'))
+    column_string = ','.join(column)
+    # app.logger.info(column_string)
     range_start = request.args.get('range_start', '', type=str)
     range_end = request.args.get('range_end', '', type=str)
     order_by = request.args.get('order_by', 'asc', type=str)  # Default to ascending
     view_type = request.args.get('view_type', '', type=str)
 
     if view_type == "attribute":
-      view = column
+      view = column_string
     else:
       view = "*"
 
     # Adjust query for range
-    query = text(f"SELECT {view} FROM {table_name} WHERE {table_name}.{column} BETWEEN \'{range_start}\' AND \'{range_end}\' ORDER BY {column} {order_by.upper()}")
-
-    results = engine.execute(query).fetchall()
-    return render_template('partials/table_data.html', rows=results)
-
-
+    query = text(f"SELECT {view} FROM {table_name} WHERE {table_name}.{column_string} BETWEEN \'{range_start}\' AND \'{range_end}\' ORDER BY {column_string} {order_by.upper()}")
+    try:
+        results = engine.execute(query).fetchall()
+        return render_template('partials/table_data.html', rows=results)
+    except SQLAlchemyError as e:
+        return jsonify({'error': 'Query not renderable'}), 500  # Sending a JSON response with error
 
 
   
