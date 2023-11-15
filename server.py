@@ -157,8 +157,7 @@ def get_columns():
 def get_table_data():
     table_name = request.args.get('table_name', '', type=str)
     query = text(f"SELECT * FROM {table_name}")
-    app.logger.info("This is the query: ", table_name)
-    results = engine.execute(query).fetchall()
+    results = conn.execute(query).fetchall()
     return render_template('partials/table_data.html', rows=results)
 
 
